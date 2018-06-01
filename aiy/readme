@@ -1,0 +1,36 @@
+
+We also need to move the file to the correct location, so systemd can make use of it. To do so, move the file with the following command:
+
+sudo mv my_assistant.service /lib/systemd/system/
+
+Now your service has been configured! To enable your service, enter:
+
+sudo systemctl enable my_assistant.service
+
+Note how we are referring to the service by its service name, not the name of the script it runs. To disable your service, enter:
+
+sudo systemctl disable my_assistant.service
+
+To manually start your service, enter:
+
+sudo service my_assistant start
+
+To manually stop your service, enter:
+
+sudo service my_assistant stop
+
+To check the status of your service, enter:
+
+sudo service my_assistant status
+
+
+
+
+
+Commands
+
+My two radio - spicefm telugu radio
+My radio - another online telugu radio
+My jazz - jazz music from San Diego
+
+
