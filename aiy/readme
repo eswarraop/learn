@@ -33,4 +33,6 @@ My two radio - spicefm telugu radio
 My radio - another online telugu radio
 My jazz - jazz music from San Diego
 
+echo snc_bcm2835 >> /etc/modules
 
+sudo apt-get install youtube-dl / latest, mpc, mpd, alsautils, mps-youtube

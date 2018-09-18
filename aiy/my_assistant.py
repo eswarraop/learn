@@ -18,24 +18,20 @@
 The Google Assistant Library has direct access to the audio API, so this Python
 code doesn't need to record audio. Hot word detection "OK, Google" is supported.
 
-The Google Assistant Library can be installed with:
-    env/bin/pip install google-assistant-library==0.0.2
-
 It is available for Raspberry Pi 2/3 only; Pi Zero is not supported.
 """
 
 import logging
-import subprocess
+import platform
 import sys
-import code
 
 import aiy.assistant.auth_helpers
-import aiy.audio
+from aiy.assistant.library import Assistant
 import aiy.voicehat
-from google.assistant.library import Assistant
 from google.assistant.library.event import EventType
+import aiy.audio
+import subprocess
 
-from datetime import datetime, time
 
 radio=False
 
@@ -48,11 +44,8 @@ logging.basicConfig(
     format="[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
 )
 
-def in_between(now, start,end):
-    if start <= end:
-        return start <= now < end
-    else:
-        return start <= now or now <end
+
+
 
 def power_off_pi():
     aiy.audio.say('Good bye!')
@@ -147,19 +140,32 @@ def play_list( search_string ):
  
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def process_event(assistant, event):
+    print(event)
     status_ui = aiy.voicehat.get_status_ui()
     if event.type == EventType.ON_START_FINISHED:
-        if in_between(datetime.now().time(),time(22),time(6)): 
-            status_ui.status('off')
-        else:
-            status_ui.status('ready')
+        status_ui.status('ready')
         if sys.stdout.isatty():
             print('Say "OK, Google" then speak, or press Ctrl+C to quit...')
 
     elif event.type == EventType.ON_CONVERSATION_TURN_STARTED:
         status_ui.status('listening')
-        print ("Started a conversation so I will switch off the radio")
+        # eswar
         check_radio=subprocess.check_output("mpc status", shell=True)
         if "playing" in str(check_radio):
             global radio
@@ -250,44 +256,28 @@ def process_event(assistant, event):
             assistant.stop_conversation()
             news()
 
+
     elif event.type == EventType.ON_END_OF_UTTERANCE:
         status_ui.status('thinking')
-        
 
-    elif event.type == EventType.ON_CONVERSATION_TURN_FINISHED:
-        print ("Conversation has ended - starting listening again")
-        print (radio)
-        if radio == True:
-            print ("The radio had been on before")
-            subprocess.call('mpc play', shell=True)
+    elif (event.type == EventType.ON_CONVERSATION_TURN_FINISHED
+          or event.type == EventType.ON_CONVERSATION_TURN_TIMEOUT
+          or event.type == EventType.ON_NO_RESPONSE):
         status_ui.status('ready')
 
     elif event.type == EventType.ON_ASSISTANT_ERROR and event.args and event.args['is_fatal']:
         sys.exit(1)
 
-def _on_button_pressed():
-    print ("button pressed")
-    subprocess.call('mpc stop', shell=True)
-    
-    global mpsyt
-    #code.interact( local = locals() )
-
-    mpsyt.kill()
-    mpsyt = subprocess.Popen(["/usr/local/bin/mpsyt",""],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-
-    global radio
-    radio=True
-
-    
-    
 
 def main():
-    radio = False
+    if platform.machine() == 'armv6l':
+        print('Cannot run hotword demo on Pi Zero!')
+        exit(-1)
+
     credentials = aiy.assistant.auth_helpers.get_assistant_credentials()
     with Assistant(credentials) as assistant:
-        aiy.voicehat.get_button().on_press(_on_button_pressed)
         for event in assistant.start():
-                process_event(assistant, event)
+            process_event(assistant, event)
 
 
 if __name__ == '__main__':
