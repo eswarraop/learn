@@ -1,10 +1,15 @@
 Description=My awesome assistant app
 
 [Service]
-ExecStart=/bin/bash -c '/home/pi/AIY-voice-kit-python/env/bin/python3 -u src/my_assistant.py'
-WorkingDirectory=/home/pi/AIY-voice-kit-python
+ExecStart=/bin/bash -c '/usr/bin/python3 /home/pi/AIY-voice-kit-python/src/examples/voice/assistant_library_demo.py'
+WorkingDirectory=/home/pi
 Restart=always
 User=pi
+Group=pi
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=assist
+Environment=DISPLAY=:0
 
 [Install]
 WantedBy=multi-user.target

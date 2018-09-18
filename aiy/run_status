@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+#To manually stop your service, enter:
+
+sudo service my_assistant status
+
+

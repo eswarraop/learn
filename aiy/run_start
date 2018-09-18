@@ -1,0 +1,18 @@
+#!/bin/bash
+
+
+sudo cp my_assistant.service /lib/systemd/system/
+
+#Now your service has been configured! To enable your service, enter:
+
+sudo systemctl enable my_assistant.service
+
+#Note how we are referring to the service by its service name, not the name of the script it runs. To disable your service, enter:
+
+sudo systemctl disable my_assistant.service
+
+#To manually start your service, enter:
+
+sudo service my_assistant start
+
+

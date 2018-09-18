@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+/bin/bash -c '/usr/bin/python3 /home/pi/AIY-voice-kit-python/src/examples/voice/assistant_library_demo.py'
+
+

@@ -1,7 +1,7 @@
 
 We also need to move the file to the correct location, so systemd can make use of it. To do so, move the file with the following command:
 
-sudo mv my_assistant.service /lib/systemd/system/
+sudo cp my_assistant.service /lib/systemd/system/
 
 Now your service has been configured! To enable your service, enter:
 
