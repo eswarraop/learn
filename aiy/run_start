@@ -9,7 +9,7 @@ sudo systemctl enable my_assistant.service
 
 #Note how we are referring to the service by its service name, not the name of the script it runs. To disable your service, enter:
 
-sudo systemctl disable my_assistant.service
+#sudo systemctl disable my_assistant.service
 
 #To manually start your service, enter:
 

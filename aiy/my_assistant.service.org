@@ -1,7 +1,7 @@
 Description=My awesome assistant app
 
 [Service]
-ExecStart=/bin/bash -c '/usr/bin/python3 /home/pi/clone/learn/aiy/my_assistant.py'
+ExecStart=/bin/bash -c '/usr/bin/python3 /home/pi/AIY-voice-kit-python/src/examples/voice/assistant_library_demo.py'
 WorkingDirectory=/home/pi
 Restart=always
 User=pi
