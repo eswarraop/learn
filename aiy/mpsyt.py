@@ -50,7 +50,9 @@ class player():
         time.sleep(3)
         self.send_command("1")
         time.sleep(3)
-        self.send_command("1")
+        self.send_command("shuffle")
+        time.sleep(3)
+        self.send_command("1-")
 
 
     def kill(self):
