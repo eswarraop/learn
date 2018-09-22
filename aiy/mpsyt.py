@@ -12,15 +12,20 @@ class player():
 
     def __init__(self):
 
-        log_file = "mpsyt.log"
+        log_file = "/home/pi/mpsyt.log"
         self.log = open(log_file, 'w')
-        err_file = "mpsyt.err"
+        err_file = "/home/pi/mpsyt.err"
         self.err = open(err_file, 'w')
 
+        self.run_mpsyt()
+
+
+    def run_mpsyt(self):
         self.mpsyt = subprocess.Popen(["/usr/local/bin/mpsyt",""],stdin=subprocess.PIPE,
                                                                   stdout=self.log,
                                                                   stderr=self.err,
                                                                   shell=True)
+        
 
         time.sleep(1)
         self.send_command('set playerargs --volume=30')
@@ -36,20 +41,28 @@ class player():
     def play_song(self, line):
         command = "/{0}".format( line ) 
         self.send_command(command)
-        time.sleep(1)
+        time.sleep(3)
         self.send_command("1")
 
     def play_list(self, line):
         command = "//{0}".format( line )
         self.send_command(command)
-        time.sleep(1)
+        time.sleep(3)
         self.send_command("1")
-        time.sleep(1)
+        time.sleep(3)
         self.send_command("1")
 
 
     def kill(self):
-        self.mpsyt.kill()
+
+        pid = str( self.mpsyt.pid )
+        ppid = subprocess.check_output([ "ps -o ppid= {0}".format( pid )], shell=True ).decode().strip()
+        time.sleep(1)
+        out = subprocess.check_output(["kill -9 -{0}".format( ppid )], shell=True)
+        time.sleep(1)
+
+
+
 
 
     def stop(self):
@@ -65,10 +78,10 @@ class player():
         self.send_command("set playerargs --volume={0}".format( number ))
 
     def increase_volume(self ):
-        self.send_command("9".format( number ))
+        self.send_command("9")
 
     def decrease_volume(self ):
-        self.send_command("0".format( number ))
+        self.send_command("0")
 
 
 
@@ -77,7 +90,7 @@ class player():
 if __name__ == '__main__':
 
     obj = player()
-    obj.play_song("geeta govindam")
+    obj.play_song("krishanrjuna yuddam turn the party up telugu song")
 
     code.interact( local = locals() )
 

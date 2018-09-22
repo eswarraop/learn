@@ -37,6 +37,8 @@ from google.assistant.library.event import EventType
 import aiy.audio
 import subprocess
 
+from mpsyt import player
+
 
 
 
@@ -62,9 +64,8 @@ class MyAssistant(object):
         self._can_start_conversation = False
         self._assistant = None
 
-        self.mpsyt = subprocess.Popen(["/usr/local/bin/mpsyt",""],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-        self.mpsyt.stdin.write(bytes('set playerargs --volume=30\n', 'utf-8'))
-        self.mpsyt.stdin.flush()
+        self.mpsyt = player()
+        self.log = open("/home/pi/aiy.log", "w")
 
 
     def start(self):
@@ -82,16 +83,19 @@ class MyAssistant(object):
                 self._process_event(event)
 
     def _process_event(self, event):
-        print(event)
+        print(event, file=self.log)
         status_ui = aiy.voicehat.get_status_ui()
+
         if event.type == EventType.ON_START_FINISHED:
+
             status_ui.status('ready')
             self._can_start_conversation = True
+
             # Start the voicehat button trigger.
             aiy.voicehat.get_button().on_press(self._on_button_pressed)
             if sys.stdout.isatty():
                 print('Say "OK, Google" or press the button, then speak. '
-                      'Press Ctrl+C to quit...')
+                      'Press Ctrl+C to quit...', file=self.log)
 
         elif event.type == EventType.ON_CONVERSATION_TURN_STARTED:
             self._can_start_conversation = False
@@ -99,7 +103,7 @@ class MyAssistant(object):
 
 
         elif event.type == EventType.ON_RECOGNIZING_SPEECH_FINISHED and event.args:
-            print('You said:', event.args['text'])
+            print('You said:', event.args['text'], file=self.log)
             text = event.args['text'].lower()
 
             if text == 'sleep':
@@ -122,13 +126,13 @@ class MyAssistant(object):
             elif 'play song' in text:
                 self._assistant.stop_conversation()
                 value = text.split(" ")[2:]
-                self.play_track( " ".join(value) )
+                self.mpsyt.play_song( " ".join(value) )
 
 
             elif 'play list' in text:
                 self._assistant.stop_conversation()
                 value = text.split(" ")[2:]
-                self.play_track( " ".join(value) )
+                self.mpsyt.play_list( " ".join(value) )
 
 
         elif event.type == EventType.ON_END_OF_UTTERANCE:
@@ -150,18 +154,8 @@ class MyAssistant(object):
         # 2. The assistant library is already in a conversation.
 
 
-        self.mpsyt.stdin.write(bytes(' ', 'utf-8'))
-        self.mpsyt.stdin.flush()
-
-        code.interact( local  = locals() )
 
         self.mpsyt.kill()
-
-        self.mpsyt = subprocess.Popen(["/usr/local/bin/mpsyt",""],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-        self.mpsyt.stdin.write(bytes('set playerargs --volume=30\n', 'utf-8'))
-        self.mpsyt.stdin.flush()
-
-    
 
 
         #if self._can_start_conversation:
@@ -186,38 +180,7 @@ class MyAssistant(object):
         aiy.audio.say('My IP address is %s' % ip_address.decode('utf-8'))
     
     
-    def mpsyt_stop(self ):
     
-        
-        self.mpsyt.stdin.write(bytes('\n', 'utf-8'))
-        self.mpsyt.stdin.flush()
-
-    
-    
-    def mpsyt_pause(self ):
-    
-        
-        self.mpsyt.stdin.write(bytes(' ', 'utf-8'))
-        self.mpsyt.stdin.flush()
-    
-    
-    
-     
-    def play_track(self, search_string ):
-    
-        
-        self.mpsyt.stdin.write(bytes('/' + search_string + '\n1\n', 'utf-8'))
-        self.mpsyt.stdin.flush()
-        
-        
-    def play_list(self, search_string ):
-    
-        global mpsyt
-        
-        self.mpsyt.stdin.write(bytes('//' + search_string + '\n1\n', 'utf-8'))
-        self.mpsyt.stdin.flush()
-        
-     
 
 
 def main():
