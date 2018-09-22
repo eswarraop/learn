@@ -33,10 +33,9 @@ import aiy.audio
 import subprocess
 
 
-radio=False
 
 mpsyt = subprocess.Popen(["/usr/local/bin/mpsyt",""],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-mpsyt.stdin.write(bytes('set playerargs --volume=40\n', 'utf-8'))
+mpsyt.stdin.write(bytes('set playerargs --volume=30\n', 'utf-8'))
 mpsyt.stdin.flush()
 
 
