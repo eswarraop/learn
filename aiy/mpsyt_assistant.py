@@ -36,6 +36,8 @@ import subprocess
 radio=False
 
 mpsyt = subprocess.Popen(["/usr/local/bin/mpsyt",""],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+mpsyt.stdin.write(bytes('set playerargs --volume=40\n', 'utf-8'))
+mpsyt.stdin.flush()
 
 
 
@@ -63,65 +65,25 @@ def say_ip():
     ip_address = subprocess.check_output("hostname -I | cut -d' ' -f1", shell=True)
     aiy.audio.say('My IP address is %s' % ip_address.decode('utf-8'))
 
-def classic_fm():
-    subprocess.call('mpc clear', shell=True)
-    subprocess.call('mpc add http://52.3.202.102:8000/stream.mp3', shell=True)
-    subprocess.call('mpc play', shell=True)
 
-def vizag_radio():
-    subprocess.call('mpc clear', shell=True)
-    subprocess.call('mpc add http://fmout.spicefm.in:8000/spice_b', shell=True)
-    subprocess.call('mpc play', shell=True)
+def mpsyt_stop( ):
 
-def sdjazz():
-    subprocess.call('mpc clear', shell=True)
-    subprocess.call('mpc add http://listen.jazz88.org/ksds.mp3', shell=True)
-    subprocess.call('mpc play', shell=True)
+    global mpsyt
     
-def news():
-    subprocess.call('mpc clear', shell=True)
-    subprocess.call('mpc add http://media-ice.musicradio.com/LBCUKMP3Low', shell=True)
-    subprocess.call('mpc play', shell=True)
+    mpsyt.stdin.write(bytes('\n', 'utf-8'))
+    mpsyt.stdin.flush()
+
+
+def mpsyt_pause( ):
+
+    global mpsyt
     
-def radio_off():
-    subprocess.call('mpc clear', shell=True)
-    subprocess.call('mpc stop', shell=True)
-    
-#GET_VOLUME = r'amixer get Master | grep "Front Left:" | sed "s/.*\[\([0-9]\+\)%\].*/\1/"'
-#SET_VOLUME = 'amixer -q set Master %d%%'
-
-GET_VOLUME = r'mpc volume | sed "s/volume: \([0-9]\+\)\%.*/\1/"'
-SET_VOLUME = 'mpc volume %d'
-
-def get_volume():
-    result = subprocess.check_output(GET_VOLUME, shell=True).strip()
-    aiy.audio.say('Volume is %s' % result.decode('utf-8'))
-
-
-def set_volume( res ):
-    vol = int(res) 
-    vol = max(0, min(100, vol))
-    subprocess.call(SET_VOLUME % vol, shell=True)
-    aiy.audio.say('Volume at %d %%.' % vol)
-
-
-GET_MASTER_VOLUME = r'amixer get Master | grep "Front Left:" | sed "s/.*\[\([0-9]\+\)%\].*/\1/"'
-SET_MASTER_VOLUME = 'amixer -q set Master %d%%'
-
-def get_master_volume():
-    result = subprocess.check_output(GET_MASTER_VOLUME, shell=True).strip()
-    aiy.audio.say('Master volume is %s' % result.decode('utf-8'))
-
-
-def set_master_volume( res ):
-    vol = int(res) 
-    vol = max(0, min(100, vol))
-    subprocess.call(SET_VOLUME % vol, shell=True)
-    aiy.audio.say('Master volume at %d %%.' % vol)
+    mpsyt.stdin.write(bytes(' ', 'utf-8'))
+    mpsyt.stdin.flush()
 
 
 
-
+ 
 def play_track( search_string ):
 
     global mpsyt
@@ -139,19 +101,10 @@ def play_list( search_string ):
     
  
 
+def on_button(_):
+    mpsyt_stop()
 
-
-
-
-
-
-
-
-
-
-
-
-
+aiy.voicehat.get_button().on_press( on_button ) 
 
 
 
@@ -165,64 +118,26 @@ def process_event(assistant, event):
 
     elif event.type == EventType.ON_CONVERSATION_TURN_STARTED:
         status_ui.status('listening')
-        # eswar
-        check_radio=subprocess.check_output("mpc status", shell=True)
-        if "playing" in str(check_radio):
-            global radio
-            radio = True
-            print (radio)
-            print ("The radio was playing")
-        else:
-            global radio
-            radio = False
-            print ("The radio wasn't playing")
-        subprocess.call('mpc stop', shell=True)
 
     elif event.type == EventType.ON_RECOGNIZING_SPEECH_FINISHED and event.args:
         print('You said:', event.args['text'])
         text = event.args['text'].lower()
+
         if text == 'sleep':
             assistant.stop_conversation()
             power_off_pi()
+
         if text == 'check audio':
             assistant.stop_conversation()
             test_message()
+
         elif text == 'reboot':
             assistant.stop_conversation()
             reboot_pi()
+
         elif text == 'ip address':
             assistant.stop_conversation()
             say_ip()
-
-        elif text == 'get volume':
-            assistant.stop_conversation()
-            get_volume()
-
-        elif 'set volume' in text:
-            assistant.stop_conversation()
-            value = text.split(" ")[-1]
-
-            try:
-                value = int(value)
-            except Exception as err:
-                value = 50
-
-            set_volume(value )
-
-        elif text == 'get master':
-            assistant.stop_conversation()
-            get_master_volume()
-
-        elif 'set master' in text:
-            assistant.stop_conversation()
-            value = text.split(" ")[-1]
-
-            try:
-                value = int(value)
-            except Exception as err:
-                value = 50
-
-            set_master_volume(value )
 
 
         elif 'play song' in text:
@@ -237,26 +152,7 @@ def process_event(assistant, event):
             play_track( " ".join(value) )
 
 
-        elif text == 'my radio':
-            assistant.stop_conversation()
-            classic_fm()
-
-        elif text == 'my two radio':
-            assistant.stop_conversation()
-            vizag_radio()
-
-        elif text == 'my jazz':
-            assistant.stop_conversation()
-            sdjazz()
-
-        elif text == 'stop my radio':
-            assistant.stop_conversation()
-            radio_off()
-        elif text == 'my news':
-            assistant.stop_conversation()
-            news()
-
-
+    
     elif event.type == EventType.ON_END_OF_UTTERANCE:
         status_ui.status('thinking')
 
