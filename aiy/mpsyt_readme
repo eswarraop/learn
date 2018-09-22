@@ -6,3 +6,8 @@ mpsyt --> /search pattern --> 1 --> play / pause / stop / quit
 
 
 
+pi@raspberrypi:~ $ sudo apt-get install mpv mplayer
+pi@raspberrypi:~ $ sudo pip3 install -U youtube-dl
+pi@raspberrypi:~ $ sudo pip3 install mps-youtube
+
+
