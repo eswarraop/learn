@@ -11,3 +11,5 @@ pi@raspberrypi:~ $ sudo pip3 install -U youtube-dl
 pi@raspberrypi:~ $ sudo pip3 install mps-youtube
 
 
+
+set playerargs --volume=40
