@@ -36,3 +36,12 @@ My jazz - jazz music from San Diego
 echo snc_bcm2835 >> /etc/modules
 
 sudo apt-get install youtube-dl / latest, mpc, mpd, alsautils, mps-youtube
+
+
+Tried to update youtube-dl 
+sudo python3.5 -m pip install --upgrade youtube-dl
+
+and it worked
+
+
+
