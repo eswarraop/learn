@@ -11,6 +11,9 @@ Place = struct('Place', ['latitude', 'longitude', 'timezone'])
 
 sidereal_year = 365.256360417   # From WolframAlpha
 
+planets = ['MERCURY', 'VENUS', 'SUN', 'MOON', 'MARS', 'JUPITER', 'SATURN', 'TRUE_NODE']
+rasi = ['Mesha', 'Vrishaba', 'Mithuna', 'Karka', 'Simha', 'Kanya', 'Tula', 'Vrisch', 'Dhanu', 'Makara', 'Kumbha', 'Meena']
+
 # namah suryaya chandraya mangalaya ... rahuve ketuve namah
 swe.KETU = swe.PLUTO  # I've mapped Pluto to Ketu
 planet_list = [swe.SUN, swe.MOON, swe.MARS, swe.MERCURY, swe.JUPITER,
@@ -55,10 +58,11 @@ def sidereal_longitude(jd, place, planet):
   longi = swe.calc_ut(jd_utc, planet, flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL)
   reset_ayanamsa_mode()
   longi_norm =  norm360(longi[0][0]) # degrees
-  constellation = int(longi_norm / 30) + 1
+  constellation = int(longi_norm / 30) 
+  current = rasi[constellation]
   coordinates = to_dms(longi_norm % 30)
 
-  return [constellation, coordinates]
+  return [current, coordinates]
 
 
 solar_longitude = lambda jd, place: sidereal_longitude(jd, place, swe.SUN)
@@ -94,11 +98,12 @@ def ascendant(jd, place):
   nirayana_lagna = swe.houses_ex(jd_utc, lat, lon, flags = swe.FLG_SIDEREAL)[1][0]
   # 12 zodiac signs span 360°, so each one takes 30°
   # 0 = Mesha, 1 = Vrishabha, ..., 11 = Meena
-  constellation = int(nirayana_lagna / 30) + 1
+  constellation = int(nirayana_lagna / 30) 
   coordinates = to_dms(nirayana_lagna % 30)
+  current = rasi[constellation]
 
   reset_ayanamsa_mode()
-  return [constellation, coordinates]
+  return [current, coordinates]
 
 
 def ascendant_tests():
@@ -115,24 +120,39 @@ norm180 = lambda angle: (angle - 360) if angle >= 180 else angle;
 norm360 = lambda angle: angle % 360
 
 
+
+def print_chart(jd, city):
+    print("Lagna")
+    print(ascendant(jd, city))
+    for planet in planets:
+        print(planet)
+        code = getattr(swe, planet, False)
+        print(sidereal_longitude(jd, city, code))
+
+
+
 if __name__ == '__main__':
     now = datetime.datetime.now()
     #jd2 = local_time_to_jdut1(now.year, now.month, now.day, hour = now.hour, minutes = now.minute, seconds = now.second, timezone = -6.0)
     import sys
     bangalore = Place(12.972, 77.594, +5.5)
+    visakhapatnam = Place(17.6868, 83.2185, +5.5)
     shillong = Place(25.569, 91.883, +5.5)
     helsinki = Place(60.17, 24.935, +2.0)
     austin = Place(30.2672, -97.7431, -6)
     #ascendant_tests()
 
     jd2 = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60. + now.second/3600.)
-    print("Lagna")
-    print(ascendant(jd2, austin))
-    planets = ['MERCURY', 'VENUS', 'SUN', 'MOON', 'MARS', 'JUPITER', 'SATURN', 'TRUE_NODE']
-    for planet in planets:
-        print(planet)
-        code = getattr(swe, planet, False)
-        print(sidereal_longitude(jd2, austin, code))
+    ganavika = swe.julday(2020, 8, 31, 18 + 0/60. + 0/3600.)
+    sujeeth = swe.julday(2010, 2, 15, 14 + 35/60. + 0/3600.)
+    sudeep = swe.julday(2010, 2, 15, 14 + 38/60. + 0/3600.)
+    madhuri = swe.julday(1983, 10, 25, 7 + 30/60. + 0/3600.)
+    #eswar = swe.julday(1985, 4, 10, 11 + 45/60. + 0/3600.)
+    #print_chart(ganavika, visakhapatnam)
+    #print_chart(sujeeth, visakhapatnam)
+    #print_chart(sudeep, visakhapatnam)
+    print_chart(madhuri, visakhapatnam)
+    #print_chart(eswar, visakhapatnam)
 
 
 
