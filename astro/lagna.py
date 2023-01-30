@@ -3,6 +3,7 @@
 from __future__ import division
 from math import ceil
 from collections import namedtuple as struct
+import datetime
 import swisseph as swe
 
 Date = struct('Date', ['year', 'month', 'day'])
@@ -41,18 +42,27 @@ gregorian_to_jd = lambda date: swe.julday(date.year, date.month, date.day, 0.0)
 jd_to_gregorian = lambda jd: swe.revjul(jd, swe.GREG_CAL)   # returns (y, m, d, h, min, s)
 
 set_ayanamsa_mode = lambda: swe.set_sid_mode(swe.SIDM_LAHIRI)
+#set_ayanamsa_mode = lambda: swe.set_sid_mode(swe.SIDM_TRUE_CITRA)
+#set_ayanamsa_mode = lambda: swe.set_sid_mode(swe.SIDM_TRUE_PUSHYA)
 reset_ayanamsa_mode = lambda: swe.set_sid_mode(swe.SIDM_FAGAN_BRADLEY)
 
 
-def sidereal_longitude(jd, planet):
+def sidereal_longitude(jd, place, planet):
   """Computes nirayana (sidereal) longitude of given planet on jd"""
+  lat, lon, tz  = place
+  jd_utc = jd - (tz / 24.)
   set_ayanamsa_mode()
-  longi = swe.calc_ut(jd, planet, flag = swe.FLG_SWIEPH | swe.FLG_SIDEREAL)
+  longi = swe.calc_ut(jd_utc, planet, flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL)
   reset_ayanamsa_mode()
-  return norm360(longi[0]) # degrees
+  longi_norm =  norm360(longi[0][0]) # degrees
+  constellation = int(longi_norm / 30) + 1
+  coordinates = to_dms(longi_norm % 30)
 
-solar_longitude = lambda jd: sidereal_longitude(jd, swe.SUN)
-lunar_longitude = lambda jd: sidereal_longitude(jd, swe.MOON)
+  return [constellation, coordinates]
+
+
+solar_longitude = lambda jd, place: sidereal_longitude(jd, place, swe.SUN)
+lunar_longitude = lambda jd, place: sidereal_longitude(jd, place, swe.MOON)
 
 def local_time_to_jdut1(year, month, day, hour = 0, minutes = 0, seconds = 0, timezone = 0.0):
   """Converts local time to JD(UT1)"""
@@ -64,28 +74,65 @@ def local_time_to_jdut1(year, month, day, hour = 0, minutes = 0, seconds = 0, ti
 
 def ascendant(jd, place):
     lat, lon, tz  = place
-
     jd_utc = jd - (tz / 24.)
     
     set_ayanamsa_mode()
-    data = swe.houses_ex(jd_utc, lat, lon)
+    data = swe.houses_ex(jd_utc, lat, lon, flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL )
     nirayana_lagna = data[1][0]
+    print(nirayana_lagna)
     rasi = int(nirayana_lagna/30)
 
     return rasi
 
+def ascendant(jd, place):
+  """Lagna (=ascendant) calculation at any given time & place"""
+  lat, lon, tz = place
+  jd_utc = jd - (tz / 24.)
+  set_ayanamsa_mode() # needed for swe.houses_ex()
+
+  # returns two arrays, cusps and ascmc, where ascmc[0] = Ascendant
+  nirayana_lagna = swe.houses_ex(jd_utc, lat, lon, flags = swe.FLG_SIDEREAL)[1][0]
+  # 12 zodiac signs span 360°, so each one takes 30°
+  # 0 = Mesha, 1 = Vrishabha, ..., 11 = Meena
+  constellation = int(nirayana_lagna / 30) + 1
+  coordinates = to_dms(nirayana_lagna % 30)
+
+  reset_ayanamsa_mode()
+  return [constellation, coordinates]
+
+
+def ascendant_tests():
+  print(sys._getframe().f_code.co_name)
+  jd = swe.julday(2015, 9, 24, 23 + 38/60.)
+  assert(ascendant(jd, bangalore) == [2, [4, 37, 10]])
+  jd = swe.julday(2015, 9, 25, 13 + 29/60. + 13/3600.)
+  assert(ascendant(jd, bangalore) == [8, [20, 23, 31]])
+
+# Make angle lie between [-180, 180) instead of [0, 360)
+norm180 = lambda angle: (angle - 360) if angle >= 180 else angle;
+
+# Make angle lie between [0, 360)
+norm360 = lambda angle: angle % 360
+
 
 if __name__ == '__main__':
-    #rasi = ascendant(jd, place)
-    #print(rasi)
-    year = 2023
-    month = 1
-    day = 29
-    jd1 = gregorian_to_jd(Date(year, month, day))
-    jd2 = local_time_to_jdut1(year, month, day, hour = 0, minutes = 0, seconds = 0, timezone = 0.0)
+    now = datetime.datetime.now()
+    #jd2 = local_time_to_jdut1(now.year, now.month, now.day, hour = now.hour, minutes = now.minute, seconds = now.second, timezone = -6.0)
+    import sys
+    bangalore = Place(12.972, 77.594, +5.5)
+    shillong = Place(25.569, 91.883, +5.5)
+    helsinki = Place(60.17, 24.935, +2.0)
     austin = Place(30.2672, -97.7431, -6)
-    rasi = ascendant(jd2, austin)
+    #ascendant_tests()
 
-    import pdb
-    pdb.set_trace()
+    jd2 = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60. + now.second/3600.)
+    print("Lagna")
+    print(ascendant(jd2, austin))
+    planets = ['MERCURY', 'VENUS', 'SUN', 'MOON', 'MARS', 'JUPITER', 'SATURN', 'TRUE_NODE']
+    for planet in planets:
+        print(planet)
+        code = getattr(swe, planet, False)
+        print(sidereal_longitude(jd2, austin, code))
+
+
 
