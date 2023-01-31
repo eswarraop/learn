@@ -47,12 +47,12 @@
 					.attr("height", (height + margin.top + margin.bottom))
 				  .append("g").attr("class", "wrapper")
 					.attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
-		d3.json("/get-data", function(error, root) {
-		  //if (error) throw error;
-		
-		  partition.nodes(root);
-		  //x.domain([0, root.value]).nice();
-		});
+		//d3.json("/get-data", function(error, root) {
+		//  //if (error) throw error;
+		//
+		//  partition.nodes(root);
+		//  //x.domain([0, root.value]).nice();
+		//});
 
 
 		////////////////////////////////////////////////////////////
@@ -123,6 +123,16 @@
 		    .append("textPath")
 			.attr("xlink:href",function(d,i){return "#monthArc_"+i;})
 			.text(function(d){return d.month;});	
+
+
+	    	function update_values() { 
+		    $SCRIPT_ROOT = {{ request.script_root|tojson|safe}};
+                    $.getJSON($SCRIPT_ROOT + "/_stuff", 
+			function(data) {
+			    print(data);
+		        });
+	        }
+
 	</script>
 	
   </body>

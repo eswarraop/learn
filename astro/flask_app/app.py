@@ -12,15 +12,12 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    data = get_planet_data()
-    return jsonify(data)
+    return render_template("index.html")
 
-
-
-#@app.route(“/get-data”,methods=[“GET”,”POST”])
-#def returnProdData():
-#    f={}
-#    return jsonify(f)
+@app.route("/_stuff",methods=["GET"])
+def stuff():
+    f=get_planet_data()
+    return jsonify(f)
 
 if __name__ == "__main__":
     app.run(debug=True)
