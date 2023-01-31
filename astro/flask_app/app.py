@@ -4,6 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, \
     session, abort, send_from_directory, send_file, jsonify
 import json
 
+from lagna import get_planet_data
 
 
 app = Flask(__name__)
@@ -11,13 +12,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    f={}
-    f['cx'] = 100
-    f['cy'] = 10
+    data = get_planet_data()
+    return jsonify(data)
 
-    return jsonify(f)
-
-    #return "Hello Eswar\n"
 
 
 #@app.route(“/get-data”,methods=[“GET”,”POST”])
