@@ -11,7 +11,7 @@ Place = struct('Place', ['latitude', 'longitude', 'timezone'])
 
 sidereal_year = 365.256360417   # From WolframAlpha
 
-planets = ['MERCURY', 'VENUS', 'SUN', 'MOON', 'MARS', 'JUPITER', 'SATURN', 'TRUE_NODE']
+planets = ['MERCURY', 'VENUS', 'SUN', 'MOON', 'MARS', 'JUPITER', 'SATURN', 'MEAN_NODE']
 rasi = ['Mesha', 'Vrishaba', 'Mithuna', 'Karka', 'Simha', 'Kanya', 'Tula', 'Vrisch', 'Dhanu', 'Makara', 'Kumbha', 'Meena']
 
 # namah suryaya chandraya mangalaya ... rahuve ketuve namah
@@ -146,13 +146,14 @@ if __name__ == '__main__':
     ganavika = swe.julday(2020, 8, 31, 18 + 0/60. + 0/3600.)
     sujeeth = swe.julday(2010, 2, 15, 14 + 35/60. + 0/3600.)
     sudeep = swe.julday(2010, 2, 15, 14 + 38/60. + 0/3600.)
-    madhuri = swe.julday(1983, 10, 25, 7 + 30/60. + 0/3600.)
+    madhuri = swe.julday(1983, 10, 25, 7 + 40/60. + 0/3600.)
     #eswar = swe.julday(1985, 4, 10, 11 + 45/60. + 0/3600.)
     #print_chart(ganavika, visakhapatnam)
     #print_chart(sujeeth, visakhapatnam)
     #print_chart(sudeep, visakhapatnam)
-    print_chart(madhuri, visakhapatnam)
+    #print_chart(madhuri, visakhapatnam)
     #print_chart(eswar, visakhapatnam)
+    print_chart(jd2, austin)
 
 
 
