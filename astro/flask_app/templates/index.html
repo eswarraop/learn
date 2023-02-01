@@ -6,7 +6,10 @@
 
 	<!-- D3.js -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
-	
+
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
 	<!-- Month names -->
 	<link href='http://fonts.googleapis.com/css?family=Courgette' rel='stylesheet' type='text/css'>
 	
@@ -29,6 +32,7 @@
   </head>
   <body>
 
+	<div id="data"></div>
 	<div id="chart"></div>
 	
     <script>
@@ -47,13 +51,167 @@
 					.attr("height", (height + margin.top + margin.bottom))
 				  .append("g").attr("class", "wrapper")
 					.attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
-		//d3.json("/get-data", function(error, root) {
-		//  //if (error) throw error;
-		//
-		//  partition.nodes(root);
+		//d3.json("/stuff", function(error, root) {
+		//  if (error) throw error;
+		//  console.log(root);
 		//  //x.domain([0, root.value]).nice();
 		//});
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'lagna')
+     	           .attr("fill", "black");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 100)
+		   .attr("id", 'lagna_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
 
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'moon')
+     	           .attr("fill", "pink");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 120)
+		   .attr("id", 'moon_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'sun')
+     	           .attr("fill", "red");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 140)
+		   .attr("id", 'sun_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'mars')
+     	           .attr("fill", "brown");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 160)
+		   .attr("id", 'mars_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'mercury')
+     	           .attr("fill", "green");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 180)
+		   .attr("id", 'mercury_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'venus')
+     	           .attr("fill", "orange");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 200)
+		   .attr("id", 'venus_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'jupiter')
+     	           .attr("fill", "yellow");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 220)
+		   .attr("id", 'jupiter_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'saturn')
+     	           .attr("fill", "black");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 240)
+		   .attr("id", 'saturn_line')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'earth') 
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+
+	        //getData();
+	        interval_id = window.setInterval(getData,  3000); 
+
+	        //clearInterval(interval_id);
+
+                function getData() {
+       		  d3.json("/stuff", function(error, response) {
+		    if (error)  { console.log(error) }
+	            console.log(JSON.stringify(response));
+		    document.getElementById("lagna").setAttribute('cx', response['LAGNA'][3][0] * 100 );
+		    document.getElementById("lagna").setAttribute('cy', response['LAGNA'][3][1] * 100 );
+		    document.getElementById("moon").setAttribute('cx', response['MOON'][3][0] * 120 );
+		    document.getElementById("moon").setAttribute('cy', response['MOON'][3][1] * 120 );
+		    document.getElementById("sun").setAttribute('cx', response['SUN'][3][0] * 140 );
+		    document.getElementById("sun").setAttribute('cy', response['SUN'][3][1] * 140 );
+		    document.getElementById("mars").setAttribute('cx', response['MARS'][3][0] * 160 );
+		    document.getElementById("mars").setAttribute('cy', response['MARS'][3][1] * 160 );
+		    document.getElementById("mercury").setAttribute('cx', response['MERCURY'][3][0] * 180 );
+		    document.getElementById("mercury").setAttribute('cy', response['MERCURY'][3][1] * 180 );
+		    document.getElementById("venus").setAttribute('cx', response['VENUS'][3][0] * 200 );
+		    document.getElementById("venus").setAttribute('cy', response['VENUS'][3][1] * 200 );
+		    document.getElementById("jupiter").setAttribute('cx', response['JUPITER'][3][0] * 220 );
+		    document.getElementById("jupiter").setAttribute('cy', response['JUPITER'][3][1] * 220 );
+		    document.getElementById("saturn").setAttribute('cx', response['SATURN'][3][0] * 240 );
+		    document.getElementById("saturn").setAttribute('cy', response['SATURN'][3][1] * 240 );
+		    });
+                }
 
 		////////////////////////////////////////////////////////////
 		//////////////////// Scales & Data /////////////////////////
@@ -80,10 +238,6 @@
 			.innerRadius(width*0.9/2 +   0) 
 			.outerRadius(width*0.9/2 +  30);
 
-		var lagna = d3.svg.arc()
-			.innerRadius(width*0.9/2 -  15) 
-			.outerRadius(width*0.9/2 -   0);
-		  
 		  
 		//Creates function that will turn the month data into start and end angles
 		var pie = d3.layout.pie()
@@ -91,12 +245,6 @@
 			.padAngle(.01)
 			.sort(null);
 	             //Append circle
-
-         	svg.append("circle")
-         	   .attr("cx", 100)
-         	   .attr("cy", 50)
-         	   .attr("r", 10)
-         	   .attr("fill", "black");
 
 
 
@@ -125,13 +273,9 @@
 			.text(function(d){return d.month;});	
 
 
-	    	function update_values() { 
-		    $SCRIPT_ROOT = {{ request.script_root|tojson|safe}};
-                    $.getJSON($SCRIPT_ROOT + "/_stuff", 
-			function(data) {
-			    print(data);
-		        });
-	        }
+	        //window.setInterval(function() { 
+	        //    $("#data").load("/stuff");
+		//	}, 3000);
 
 	</script>
 	

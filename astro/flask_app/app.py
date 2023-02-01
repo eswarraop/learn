@@ -14,7 +14,7 @@ app = Flask(__name__)
 def hello():
     return render_template("index.html")
 
-@app.route("/_stuff",methods=["GET"])
+@app.route("/stuff",methods=["GET"])
 def stuff():
     f=get_planet_data()
     return jsonify(f)

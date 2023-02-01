@@ -5,6 +5,7 @@ from math import ceil
 from collections import namedtuple as struct
 import datetime
 import swisseph as swe
+import math
 
 Date = struct('Date', ['year', 'month', 'day'])
 Place = struct('Place', ['latitude', 'longitude', 'timezone'])
@@ -62,7 +63,7 @@ def sidereal_longitude(jd, place, planet):
   current = rasi[constellation]
   coordinates = to_dms(longi_norm % 30)
 
-  return [current, coordinates, longi_norm]
+  return [current, coordinates, longi_norm ]
 
 
 solar_longitude = lambda jd, place: sidereal_longitude(jd, place, swe.SUN)
@@ -101,9 +102,8 @@ def ascendant(jd, place):
   constellation = int(nirayana_lagna / 30) 
   coordinates = to_dms(nirayana_lagna % 30)
   current = rasi[constellation]
-
   reset_ayanamsa_mode()
-  return [current, coordinates, nirayana_lagna]
+  return [current, coordinates, nirayana_lagna ]
 
 
 def ascendant_tests():
@@ -136,10 +136,21 @@ def get_planet_data():
     city = austin = Place(30.2672, -97.7431, -6)
     jd = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60. + now.second/3600.)
     data = {}
-    data['LAGNA'] = ascendant(jd, city)
+    asc = ascendant(jd, city)
+    normalized = ( asc[2] + 270 ) % 360 
+    radians = normalized * math.pi / 180
+    cartesian = [math.cos(radians), math.sin(radians)]
+    asc.append(cartesian)
+    data['LAGNA'] = asc
+
     for planet in planets:
         code = getattr(swe, planet, False)
-        data[planet] = sidereal_longitude(jd, city, code)
+        planet_data = sidereal_longitude(jd, city, code)
+        normalized = ( planet_data[2] + 270 ) % 360 
+        radians = normalized * math.pi / 180
+        cartesian = [math.cos(radians), math.sin(radians)]
+        planet_data.append(cartesian)
+        data[planet] = planet_data
 
     return data
 
