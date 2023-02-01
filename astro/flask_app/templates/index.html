@@ -19,8 +19,8 @@
 		}
 		
 		.monthArc {
-			fill: white;
-			stroke: #AAAAAA;
+			fill: none;
+			stroke: #000000;
 		}
 
 		.monthText {
@@ -185,11 +185,6 @@
 
 
 
-	        //getData();
-	        interval_id = window.setInterval(getData,  3000); 
-
-	        //clearInterval(interval_id);
-
                 function getData() {
        		  d3.json("/stuff", function(error, response) {
 		    if (error)  { console.log(error) }
@@ -235,8 +230,8 @@
 
 		//Creates a function that makes SVG paths in the shape of arcs with the specified inner and outer radius 
 		var arc = d3.svg.arc()
-			.innerRadius(width*0.9/2 +   0) 
-			.outerRadius(width*0.9/2 +  30);
+			.innerRadius(width*0.25/2 +   0) 
+			.outerRadius(width*0.9/2 +  10);
 
 		  
 		//Creates function that will turn the month data into start and end angles
@@ -259,7 +254,7 @@
 			.attr("class", "monthArc")
 			.attr("id", function(d,i) { return "monthArc_"+i; })
 			.attr("d", arc)
-	                .style("stroke-width", 2);
+	                .style("stroke-width", 1);
 			
 		//Append the month names within the arcs
 		svg.selectAll(".monthText")
@@ -272,6 +267,10 @@
 			.attr("xlink:href",function(d,i){return "#monthArc_"+i;})
 			.text(function(d){return d.month;});	
 
+
+	        //getData();
+	        interval_id = window.setInterval(getData,  3000); 
+	        //clearInterval(interval_id);
 
 	        //window.setInterval(function() { 
 	        //    $("#data").load("/stuff");
