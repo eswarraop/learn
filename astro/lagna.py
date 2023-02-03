@@ -147,13 +147,15 @@ if __name__ == '__main__':
     sujeeth = swe.julday(2010, 2, 15, 14 + 35/60. + 0/3600.)
     sudeep = swe.julday(2010, 2, 15, 14 + 38/60. + 0/3600.)
     madhuri = swe.julday(1983, 10, 25, 7 + 40/60. + 0/3600.)
+    date_2018_03_25 = swe.julday(2017, 11, 25, 7 + 40/60. + 0/3600.)
     #eswar = swe.julday(1985, 4, 10, 11 + 45/60. + 0/3600.)
     #print_chart(ganavika, visakhapatnam)
     #print_chart(sujeeth, visakhapatnam)
     #print_chart(sudeep, visakhapatnam)
     #print_chart(madhuri, visakhapatnam)
     #print_chart(eswar, visakhapatnam)
-    print_chart(jd2, austin)
+    #print_chart(jd2, austin)
+    print_chart(date_2018_03_25, austin)
 
 
 

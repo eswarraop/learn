@@ -4,7 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, \
     session, abort, send_from_directory, send_file, jsonify
 import json
 
-from .lagna import get_planet_data
+from lagna import get_planet_data
 
 
 app = Flask(__name__)

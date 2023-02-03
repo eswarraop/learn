@@ -29,37 +29,6 @@
 			font-family: 'Courgette', sans-serif;
 		}
 
-		.hand {
-			  width: 50%;
-			    right: 50%;
-			      height: 6px;
-			        background: #61afff;
-				  position: absolute;
-				    top: 50%;
-				      border-radius: 6px;
-				        transform-origin: 100%;
-					  transform: rotate(90deg);
-					    transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
-		}
-
-		.hand.hour-hand {
-			  background: #000000;
-			  width: 3%;
-			  z-index: 3;
-		}
-
-		.hand.min-hand {
-			  background: #0000ff;
-			  height: 3px;
-			  z-index: 10;
-			  width: 4.5%;
-		}
-
-		.hand.second-hand {
-			  background: #ee791a;
-			  width: 5.5%;
-			  height: 2px;
-		}
 
 
 	</style>
@@ -69,10 +38,7 @@
 	<div id="data"></div>
 	<div id="chart"></div>
 	
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
-       
+      
 
     <script>
 		////////////////////////////////////////////////////////////
@@ -90,11 +56,38 @@
 					.attr("height", (height + margin.top + margin.bottom))
 				  .append("g").attr("class", "wrapper")
 					.attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
-		//d3.json("/stuff", function(error, root) {
-		//  if (error) throw error;
-		//  console.log(root);
-		//  //x.domain([0, root.value]).nice();
-		//});
+
+	        var seconds_length = 75;
+	        var minutes_length = 65;
+	        var hours_length = 55;
+
+     	        svg.append("line")
+     	           .attr("x1", 0)
+     	           .attr("y1", 0)
+     	           .attr("x2", seconds_length)
+     	           .attr("y2", 0)
+		   .attr("id", 'seconds')
+     	           .attr("style", "stroke:rgb(255,0,0);stroke-width:1;transform: rotate(270deg);");
+
+
+
+     	        svg.append("line")
+     	           .attr("x1", 0)
+     	           .attr("y1", 0)
+     	           .attr("x2", minutes_length)
+     	           .attr("y2", 0)
+		   .attr("id", 'minutes')
+     	           .attr("style", "stroke:rgb(0,255,0);stroke-width:2;transform: rotate(270deg);");
+	
+					  
+     	        svg.append("line")
+     	           .attr("x1", 0)
+     	           .attr("y1", 0)
+     	           .attr("x2", hours_length)
+     	           .attr("y2", 0)
+		   .attr("id", 'hours')
+     	           .attr("style", "stroke:rgb(0,0,0);stroke-width:3;transform: rotate(270deg);");
+	
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
@@ -151,7 +144,7 @@
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
-     	           .attr("r", 160)
+     	           .attr("r", 200)
 		   .attr("id", 'mars_line')
 	    	   .attr("stroke-dasharray",  "5, 5" )
      	           .attr("stroke", "black")
@@ -167,7 +160,7 @@
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
-     	           .attr("r", 180)
+     	           .attr("r", 160)
 		   .attr("id", 'mercury_line')
 	    	   .attr("stroke-dasharray",  "5, 5" )
      	           .attr("stroke", "black")
@@ -183,7 +176,7 @@
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
-     	           .attr("r", 200)
+     	           .attr("r", 180)
 		   .attr("id", 'venus_line')
 	    	   .attr("stroke-dasharray",  "5, 5" )
      	           .attr("stroke", "black")
@@ -195,7 +188,7 @@
      	           .attr("cy", 0)
      	           .attr("r", 10)
 		   .attr("id", 'jupiter')
-     	           .attr("fill", "yellow");
+     	           .attr("fill", "#dbc71a");
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
@@ -236,7 +229,7 @@
      	           .attr("r", 5)
 		   .attr("id", 'origin') 
      	           .attr("stroke", "black")
-     	           .attr("fill", "none");
+     	           .attr("fill", "red");
 
 
 
@@ -250,12 +243,12 @@
 		    document.getElementById("moon").setAttribute('cy', response['MOON'][3][1] * 120 );
 		    document.getElementById("sun").setAttribute('cx', response['SUN'][3][0] * 140 );
 		    document.getElementById("sun").setAttribute('cy', response['SUN'][3][1] * 140 );
-		    document.getElementById("mars").setAttribute('cx', response['MARS'][3][0] * 160 );
-		    document.getElementById("mars").setAttribute('cy', response['MARS'][3][1] * 160 );
-		    document.getElementById("mercury").setAttribute('cx', response['MERCURY'][3][0] * 180 );
-		    document.getElementById("mercury").setAttribute('cy', response['MERCURY'][3][1] * 180 );
-		    document.getElementById("venus").setAttribute('cx', response['VENUS'][3][0] * 200 );
-		    document.getElementById("venus").setAttribute('cy', response['VENUS'][3][1] * 200 );
+		    document.getElementById("mercury").setAttribute('cx', response['MERCURY'][3][0] * 160 );
+		    document.getElementById("mercury").setAttribute('cy', response['MERCURY'][3][1] * 160 );
+		    document.getElementById("venus").setAttribute('cx', response['VENUS'][3][0] * 180 );
+		    document.getElementById("venus").setAttribute('cy', response['VENUS'][3][1] * 180 );
+		    document.getElementById("mars").setAttribute('cx', response['MARS'][3][0] * 200 );
+		    document.getElementById("mars").setAttribute('cy', response['MARS'][3][1] * 200 );
 		    document.getElementById("jupiter").setAttribute('cx', response['JUPITER'][3][0] * 220 );
 		    document.getElementById("jupiter").setAttribute('cy', response['JUPITER'][3][1] * 220 );
 		    document.getElementById("saturn").setAttribute('cx', response['SATURN'][3][0] * 240 );
@@ -326,35 +319,27 @@
 	        getData();
 	        interval_id = window.setInterval(getData,  60000); 
 
-	        const secondHand = document.querySelector('.second-hand');
-	        const minsHand = document.querySelector('.min-hand');
-	        const hourHand = document.querySelector('.hour-hand');
+	        const minsHand = document.querySelector('#minutes');
+	        const hourHand = document.querySelector('#hours');
+	        const secondHand = document.querySelector('#seconds');
 
 	        function setDate() {
 	            		   const now = new Date();
 
 	            		   const seconds = now.getSeconds();
-	            		   const secondsDegrees = ((seconds / 60) * 360) + 90;
+	            		   const secondsDegrees = ((seconds / 60) * 360) + 270;
 	            		   secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
 
 	            		   const mins = now.getMinutes();
-	            		   const minsDegrees = ((mins / 60) * 360) + ((seconds/60)*6) + 90;
+	            		   const minsDegrees = ((mins / 60) * 360) + ((seconds/60)*6) + 270;
 	            		   minsHand.style.transform = `rotate(${minsDegrees}deg)`;
 
 	            		   const hour = now.getHours();
-	            		   const hourDegrees = ((hour / 12) * 360) + ((mins/60)*30) + 90;
+	            		   const hourDegrees = ((hour / 12) * 360) + ((mins/60)*30) + 270;
 	            		   hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 	            	 }
 
 	        setInterval(setDate, 1000);
-
-	        setDate();
-
-
-
-	        //window.setInterval(function() { 
-	        //    $("#data").load("/stuff");
-		//	}, 3000);
 
 	</script>
 	
