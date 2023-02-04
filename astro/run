@@ -2,8 +2,12 @@
 
 import sys
 import os
+
 sys.path.insert(0, os.getcwd())
 from spaceclock import app as application
+
+if __name__ == '__main__':
+    application.run(debug=True)
 
 
 
