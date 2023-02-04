@@ -67,7 +67,7 @@
      	           .attr("x2", seconds_length)
      	           .attr("y2", 0)
 		   .attr("id", 'seconds')
-     	           .attr("style", "stroke:rgb(255,0,0);stroke-width:1;transform: rotate(270deg);");
+     	           .attr("style", "stroke:rgb(255,0,0);stroke-width:2;transform: rotate(270deg);");
 
 
 
@@ -77,7 +77,7 @@
      	           .attr("x2", minutes_length)
      	           .attr("y2", 0)
 		   .attr("id", 'minutes')
-     	           .attr("style", "stroke:rgb(0,255,0);stroke-width:2;transform: rotate(270deg);");
+     	           .attr("style", "stroke:rgb(168,88,50);stroke-width:3;transform: rotate(270deg);");
 	
 					  
      	        svg.append("line")
@@ -86,12 +86,12 @@
      	           .attr("x2", hours_length)
      	           .attr("y2", 0)
 		   .attr("id", 'hours')
-     	           .attr("style", "stroke:rgb(0,0,0);stroke-width:3;transform: rotate(270deg);");
+     	           .attr("style", "stroke:rgb(0,0,0);stroke-width:4;transform: rotate(270deg);");
 	
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
-     	           .attr("r", 10)
+     	           .attr("r", 5)
 		   .attr("id", 'lagna')
      	           .attr("fill", "black");
      	        svg.append("circle")
@@ -109,7 +109,7 @@
      	           .attr("cy", 0)
      	           .attr("r", 10)
 		   .attr("id", 'moon')
-     	           .attr("fill", "pink");
+     	           .attr("fill", "#a8329a");
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
@@ -119,6 +119,19 @@
      	           .attr("stroke", "black")
      	           .attr("fill", "none");
 
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'rahu')
+     	           .attr("fill", "blue");
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'ketu')
+     	           .attr("fill", "gray");
 
      	        svg.append("circle")
      	           .attr("cx", 0)
@@ -237,12 +250,16 @@
        		  d3.json("/stuff", function(error, response) {
 		    if (error)  { console.log(error) }
 	            console.log(JSON.stringify(response));
-		    document.getElementById("lagna").setAttribute('cx', response['LAGNA'][3][0] * 100 );
-		    document.getElementById("lagna").setAttribute('cy', response['LAGNA'][3][1] * 100 );
-		    document.getElementById("moon").setAttribute('cx', response['MOON'][3][0] * 120 );
-		    document.getElementById("moon").setAttribute('cy', response['MOON'][3][1] * 120 );
-		    document.getElementById("sun").setAttribute('cx', response['SUN'][3][0] * 140 );
-		    document.getElementById("sun").setAttribute('cy', response['SUN'][3][1] * 140 );
+		    document.getElementById("lagna").setAttribute('cx', response['LAGNA'][3][0] * width*0.25/2  );
+		    document.getElementById("lagna").setAttribute('cy', response['LAGNA'][3][1] * width*0.25/2  );
+		    document.getElementById("moon").setAttribute('cx', response['MOON'][3][0] * 100 );
+		    document.getElementById("moon").setAttribute('cy', response['MOON'][3][1] * 100 );
+		    document.getElementById("sun").setAttribute('cx', response['SUN'][3][0] * 120 );
+		    document.getElementById("sun").setAttribute('cy', response['SUN'][3][1] * 120 );
+		    document.getElementById("rahu").setAttribute('cx', response['RAHU'][3][0] * 140 );
+		    document.getElementById("rahu").setAttribute('cy', response['RAHU'][3][1] * 140 );
+		    document.getElementById("ketu").setAttribute('cx', response['KETU'][3][0] * 140 );
+		    document.getElementById("ketu").setAttribute('cy', response['KETU'][3][1] * 140 );
 		    document.getElementById("mercury").setAttribute('cx', response['MERCURY'][3][0] * 160 );
 		    document.getElementById("mercury").setAttribute('cy', response['MERCURY'][3][1] * 160 );
 		    document.getElementById("venus").setAttribute('cx', response['VENUS'][3][0] * 180 );

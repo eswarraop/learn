@@ -12,14 +12,12 @@ Place = struct('Place', ['latitude', 'longitude', 'timezone'])
 
 sidereal_year = 365.256360417   # From WolframAlpha
 
-planets = ['MERCURY', 'VENUS', 'SUN', 'MOON', 'MARS', 'JUPITER', 'SATURN', 'MEAN_NODE']
+planets = ['MERCURY', 'VENUS', 'SUN', 'MOON', 'MARS', 'JUPITER', 'SATURN'  ]
+nodes = ['TRUE_NODE' ]
 rasi = ['Mesha', 'Vrishaba', 'Mithuna', 'Karka', 'Simha', 'Kanya', 'Tula', 'Vrisch', 'Dhanu', 'Makara', 'Kumbha', 'Meena']
 
 # namah suryaya chandraya mangalaya ... rahuve ketuve namah
-swe.KETU = swe.PLUTO  # I've mapped Pluto to Ketu
-planet_list = [swe.SUN, swe.MOON, swe.MARS, swe.MERCURY, swe.JUPITER,
-               swe.VENUS, swe.SATURN, swe.MEAN_NODE, # Rahu = MEAN_NODE
-               swe.KETU, swe.URANUS, swe.NEPTUNE ]
+
 
 # Convert 23d 30' 30" to 23.508333 degrees
 from_dms = lambda degs, mins, secs: degs + mins/60 + secs/3600
@@ -145,16 +143,26 @@ def get_planet_data():
 
     for planet in planets:
         code = getattr(swe, planet, False)
-        planet_data = sidereal_longitude(jd, city, code)
-        normalized = ( planet_data[2] + 270 ) % 360 
-        radians = normalized * math.pi / 180
-        cartesian = [math.cos(radians), math.sin(radians)]
-        planet_data.append(cartesian)
+        planet_data = get_planet_longitude(jd, city, code)
         data[planet] = planet_data
+
+    code = getattr(swe, 'TRUE_NODE', False)
+    planet_data = get_planet_longitude(jd, city, code)
+    data['RAHU'] = planet_data
+    planet_data = get_planet_longitude(jd, city, code, invert=True)
+    data['KETU'] = planet_data
 
     return data
 
-
+def get_planet_longitude(jd, city, code, invert=False):
+    planet_data = sidereal_longitude(jd, city, code)
+    offset = 180 if invert else 0
+    normalized = ( planet_data[2] + 270 + offset ) % 360 
+    radians = normalized * math.pi / 180
+    cartesian = [math.cos(radians), math.sin(radians)]
+    planet_data.append(cartesian)
+    return planet_data
+ 
 
 if __name__ == '__main__':
     now = datetime.datetime.now()
