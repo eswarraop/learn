@@ -1,0 +1,33 @@
+Stop Apache from Starting on Linux
+The procedure to stop Apache from starting at boot time on Linux is as follows:
+
+Open the terminal application
+Login using ssh for remote server. For example:
+ssh user@server-name
+Use the following on RHEL/CentOS/Oracle/Fedora Linux:
+sudo systemctl disable httpd && sudo systemctl stop httpd
+Ubuntu/Debian users run following command:
+sudo systemctl disable apache2 && sudo systemctl stop apache2
+Let us see all commands and examples in details.
+
+Stop Apache on a CentOS/RHEL/Fedora/Oracle Linux from starting
+Is Apache 2 service running? Run the following systemctl command:
+sudo systemctl status httpd
+
+Next find out if httpd enabled at boot time:
+sudo systemctl is-enabled httpd
+
+If enabled at boot time, disable it, run:
+sudo systemctl disable httpd
+
+Stop the service, execute:
+sudo systemctl stop httpd
+sudo systemctl mask httpd
+
+Verify it:
+sudo systemctl status httpd
+sudo systemctl is-enabled httpd
+
+
+replace httpd with apache2
+
