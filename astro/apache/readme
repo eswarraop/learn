@@ -31,3 +31,48 @@ sudo systemctl is-enabled httpd
 
 replace httpd with apache2
 
+
+
+
+More instructions
+
+
+Restart Apache 2 web server, enter:
+/etc/init.d/apache2 restart
+
+OR
+sudo /etc/init.d/apache2 restart
+
+OR
+sudo service apache2 restart
+
+To stop Apache 2 web server, enter:
+/etc/init.d/apache2 stop
+
+OR
+sudo /etc/init.d/apache2 stop
+
+OR
+sudo service apache2 stop
+
+To start Apache 2 web server, enter:
+/etc/init.d/apache2 start
+
+OR
+sudo /etc/init.d/apache2 start
+
+OR
+sudo service apache2 start
+
+A note about Debian/Ubuntu Linux systemd users
+Use the following systemctl command on Debian Linux version 8.x+ or Ubuntu Linux version Ubuntu 15.04+ or above:
+## Start command ##
+sudo systemctl start apache2.service
+## Stop command ##
+sudo systemctl stop apache2.service
+## Restart command ##
+sudo systemctl restart apache2.service
+
+We can view status using the following command:
+sudo systemctl status apache2.service
+
