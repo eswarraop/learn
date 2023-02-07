@@ -1,0 +1,144 @@
+
+FLASK HELLO WORLD APP WITH APACHE WSGI
+Python-Flask.png
+
+
+  
+
+
+Bookmark and Share
+
+
+
+bogotobogo.com site search:
+ 
+Note
+Flask is a fantastic micro web framework for Python, however, it is not a native web language. So to get our Python code running on a web server is tricky.
+
+Apache will use WSGI file to access our Flask application, so the WSGI file allows Apache to interact with Python as if it is native. It's a simple script.
+
+In this article, we'll start from a very simple app which just outputs "Hello, Flask!"
+
+First, we just run it with Python interpreter. Then, we'll serve the page via Apache with WSGI.
+
+
+
+
+
+
+Install and Enable mod_wsgi
+WSGI (Web Server Gateway Interface) is an interface between web servers and web apps for python.
+
+mod_wsgi is an Apache HTTP server module that enables Apache to serve Flask applications.
+
+We need to use the following command to install mod_wsgi:
+
+$ sudo apt-get install libapache2-mod-wsgi python-dev
+To enable mod_wsgi, we can use the following command:
+
+$ sudo a2enmod wsgi 
+
+
+
+
+Files
+THe picture below shows our application files:
+
+tree.png
+The __init__.py looks like this:
+
+from flask import Flask
+app = Flask(__name__)
+@app.route("/")
+def hello():
+    return "Hello, Flask!"
+if __name__ == "__main__":
+    app.run()
+We can directly execute an app via app.run() since Flask(more specifically, Werkzeug) has an internal WSGI server for test.
+
+
+
+
+
+Virtualenv
+Setup virtualenv:
+
+$ sudo virtualenv venv
+$ source venv/bin/activate
+(venv)$ 
+
+
+
+
+Install Flask
+Install Flask:
+
+(venv)$ sudo pip install Flask
+
+
+
+
+Run server
+Install Flask:
+
+(venv)$ $ sudo python __init__.py 
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+This tells us the web server has been started and if we point our browser now to localhost:5000/ we will see the hello function is executed and the browser will display the text "Hello, Flask!"
+
+Localhost-5000.png
+
+
+
+Apache setup - WSGI
+Now we want to serve the page using Apache via WSGI which halps to get our code deployed on Apache.
+
+Here is the Apache config file (/etc/apache2/sites-available/flaskhelloworldsite.com.conf):
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@flaskhelloworldsite.com
+    ServerName www.flaskhelloworldsite.com
+    ServerAlias flaskhelloworldsite.com
+    ErrorLog /var/www/flaskhelloworldsite.com/logs/error.log
+    CustomLog /var/www/flaskhelloworldsite.com/logs/access.log combined
+
+    WSGIDaemonProcess helloworldapp user=www-data group=www-data threads=5
+    WSGIProcessGroup helloworldapp
+    WSGIScriptAlias / /var/www/FLASKAPPS/helloworldapp/helloworldapp.wsgi
+    Alias /static/ /var/www/FLASKAPPS/helloworldapp/static
+    <Directory /var/www/FLASKAPPS/helloworldapp/static>
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+</VirtualHost>
+$ sudo a2ensite flaskhelloworldsite.com.conf
+The WSGI file (/var/www/FLASKAPPS/helloworldapp/helloworldapp.wsgi):
+
+#!/usr/bin/python
+import sys
+sys.path.insert(0,"/var/www/FLASKAPPS/")
+from helloworldapp import app as application
+Add the following line to /etc/hosts file:
+
+127.0.0.1 flaskhelloworldsite.com
+Also, we need to create /var/www/flaskhelloworldsite.com/logs directory:
+
+$ sudo mkdir -p /var/www/flaskhelloworldsite.com/logs
+Change the owner:
+
+$ sudo chown -R www-data:www-data flaskhelloworldsite.com
+
+
+
+
+Reload Apache
+Let's reload the Apache server:
+
+$ sudo /etc/init.d/apache2 reload
+Go to the browser and type in flaskhelloworldsite.com:
+
+flaskhelloworldsite.png
+
+
+
+
