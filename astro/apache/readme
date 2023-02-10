@@ -76,3 +76,9 @@ sudo systemctl restart apache2.service
 We can view status using the following command:
 sudo systemctl status apache2.service
 
+
+pi@runner:/var/www/apps $ pwd
+/var/www/apps
+pi@runner:/var/www/apps $ sudo cp -r /home/pi/learn/astro/spaceclock . 
+
+
