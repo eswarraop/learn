@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+	<title>Months on an Arc</title>
+
+	<!-- D3.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+	
+	<!-- Month names -->
+	<link href='http://fonts.googleapis.com/css?family=Courgette' rel='stylesheet' type='text/css'>
+	
+	<style>
+		#chart{
+			text-align: center;
+		}
+		
+		.monthArc {
+			fill: white;
+			stroke: #AAAAAA;
+		}
+
+		.monthText {
+			fill: #6B6B6B;
+			font-size: 13px;
+			font-family: 'Courgette', sans-serif;
+		}
+	</style>
+  </head>
+  <body>
+
+	<div id="chart"></div>
+	
+    <script>
+		////////////////////////////////////////////////////////////
+		//////////////////////// Set-up ////////////////////////////
+		////////////////////////////////////////////////////////////
+
+		var screenWidth = window.innerWidth;
+
+		var margin = {left: 20, top: 50, right: 20, bottom: 20},
+			width  = Math.min(screenWidth, 650) - margin.left - margin.right,
+			height = Math.min(screenWidth, 650) - margin.top - margin.bottom;
+					
+		var svg = d3.select("#chart").append("svg")
+					.attr("width", (width + margin.left + margin.right))
+					.attr("height", (height + margin.top + margin.bottom))
+				  .append("g").attr("class", "wrapper")
+					.attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
+
+		////////////////////////////////////////////////////////////
+		//////////////////// Scales & Data /////////////////////////
+		////////////////////////////////////////////////////////////
+
+		//The start date number and end date number of the months in a year
+		var monthData = [
+			{month: "Mesha", 	    startDateID: 0, 	endDateID: 30},
+			{month: "Vrishaba",     startDateID: 31, 	endDateID: 60},
+			{month: "Mithuna", 	    startDateID: 61, 	endDateID: 90},
+			{month: "Karka", 	    startDateID: 91, 	endDateID: 120},
+			{month: "Simha",        startDateID: 121, 	endDateID: 150},
+			{month: "Kanya", 	    startDateID: 151, 	endDateID: 180},
+			{month: "Tula", 	    startDateID: 181, 	endDateID: 210},
+			{month: "Vrischika",   	startDateID: 211, 	endDateID: 240},
+			{month: "Dhanu",        startDateID: 241, 	endDateID: 270},
+			{month: "Makara", 	    startDateID: 271, 	endDateID: 300},
+			{month: "Kumbha",       startDateID: 301, 	endDateID: 330},
+			{month: "Meena",	    startDateID: 331, 	endDateID: 360}
+		];
+
+		//Creates a function that makes SVG paths in the shape of arcs with the specified inner and outer radius 
+		var arc = d3.svg.arc()
+			.innerRadius(width*0.9/2 +   0) 
+			.outerRadius(width*0.9/2 +  30);
+
+		var lagna = d3.svg.arc()
+			.innerRadius(width*0.9/2 -  15) 
+			.outerRadius(width*0.9/2 -   0);
+		  
+		  
+		//Creates function that will turn the month data into start and end angles
+		var pie = d3.layout.pie()
+			.value(function(d) { return d.endDateID - d.startDateID; })
+			.padAngle(.01)
+			.sort(null);
+	             //Append circle
+
+         	svg.append("circle")
+         	   .attr("cx", 100)
+         	   .attr("cy", 50)
+         	   .attr("r", 10)
+         	   .attr("fill", "black");
+
+
+
+		////////////////////////////////////////////////////////////
+		//////////////////// Create the Slices /////////////////////
+		////////////////////////////////////////////////////////////
+
+		//Draw the arcs themselves
+		svg.selectAll(".monthArc")
+			.data(pie(monthData))
+		   .enter().append("path")
+			.attr("class", "monthArc")
+			.attr("id", function(d,i) { return "monthArc_"+i; })
+			.attr("d", arc)
+	                .style("stroke-width", 2);
+			
+		//Append the month names within the arcs
+		svg.selectAll(".monthText")
+			.data(monthData)
+		   .enter().append("text")
+			.attr("class", "monthText")
+			.attr("x", 15) //Move the text from the start angle of the arc
+			.attr("dy", 18) //Move the text down
+		    .append("textPath")
+			.attr("xlink:href",function(d,i){return "#monthArc_"+i;})
+			.text(function(d){return d.month;});	
+	</script>
+	
+  </body>
+</html>

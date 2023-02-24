@@ -1,0 +1,18 @@
+
+
+
+eswar@penguin:~$ locust -u 100 -r 10 -t 60s -f spaceclock_locust.py --headless --host http://10.0.0.10:5000 --csv results^C
+eswar@penguin:~$ cat spaceclock_locust.py 
+from locust import HttpUser, between, task
+
+
+class WebsiteUser(HttpUser):
+    wait_time = between(5, 15)
+    
+    @task
+    def index(self):
+        self.client.get("/")
+        #self.client.get("/static/assets.js")
+
+
+
