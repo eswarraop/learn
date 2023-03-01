@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#uvicorn q2:app --host 10.0.0.10 --port 5000 --loop uvloop --http httptools --limit-concurrency 20
+gunicorn q2:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 10.0.0.10:5000
+
+

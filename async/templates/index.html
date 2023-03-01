@@ -2,11 +2,14 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-	<title>Months on an Arc</title>
+	<title>Astro Clock</title>
 
 	<!-- D3.js -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
-	
+
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
 	<!-- Month names -->
 	<link href='http://fonts.googleapis.com/css?family=Courgette' rel='stylesheet' type='text/css'>
 	
@@ -16,21 +19,27 @@
 		}
 		
 		.monthArc {
-			fill: white;
-			stroke: #AAAAAA;
+			fill: none;
+			stroke: #000000;
 		}
 
 		.monthText {
 			fill: #6B6B6B;
-			font-size: 13px;
+			font-size: 20px;
 			font-family: 'Courgette', sans-serif;
 		}
+
+
+
 	</style>
   </head>
   <body>
 
+	<div id="data"></div>
 	<div id="chart"></div>
 	
+      
+
     <script>
 		////////////////////////////////////////////////////////////
 		//////////////////////// Set-up ////////////////////////////
@@ -47,6 +56,507 @@
 					.attr("height", (height + margin.top + margin.bottom))
 				  .append("g").attr("class", "wrapper")
 					.attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");
+
+	        var seconds_length = 75;
+	        var minutes_length = 65;
+	        var hours_length = 55;
+
+	    function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+	       var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+	     
+	       return {
+	         x: centerX + (radius * Math.cos(angleInRadians)),
+	         y: centerY + (radius * Math.sin(angleInRadians))
+	       };
+	     }
+
+
+	    function describeArc(x, y, radius, startAngle, endAngle){
+
+		    var start = polarToCartesian(x, y, radius, endAngle);
+		    var end = polarToCartesian(x, y, radius, startAngle);
+		
+		    var arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+			
+		    var d = [
+		        "M", start.x, start.y,
+		        "A", radius, radius, 0, arcSweep, 0, end.x, end.y
+		    ].join(" ");
+		
+		    return d;
+		}
+
+
+     	        svg.append("line")
+     	           .attr("x1", 0)
+     	           .attr("y1", 0)
+     	           .attr("x2", seconds_length)
+     	           .attr("y2", 0)
+		   .attr("id", 'seconds')
+     	           .attr("style", "stroke:rgb(255,0,0);stroke-width:2;transform: rotate(270deg);");
+
+
+
+     	        svg.append("line")
+     	           .attr("x1", 0)
+     	           .attr("y1", 0)
+     	           .attr("x2", minutes_length)
+     	           .attr("y2", 0)
+		   .attr("id", 'minutes')
+     	           .attr("style", "stroke:rgb(168,88,50);stroke-width:3;transform: rotate(270deg);");
+	
+					  
+     	        svg.append("line")
+     	           .attr("x1", 0)
+     	           .attr("y1", 0)
+     	           .attr("x2", hours_length)
+     	           .attr("y2", 0)
+		   .attr("id", 'hours')
+     	           .attr("style", "stroke:rgb(0,0,0);stroke-width:4;transform: rotate(270deg);");
+	
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 5)
+		   .attr("id", 'lagna')
+     	           .attr("fill", "black");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 100)
+		   .attr("id", 'lagna_line')
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'moon')
+     	           .attr("fill", "#a8329a");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 120)
+		   .attr("id", 'moon_line')
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 120)
+		   .attr("id", 'moon_arc')
+     	           .attr("stroke", "#a8329a")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 120)
+		   .attr("id", 'moon_asp1')
+     	           .attr("stroke", "#a8329a")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'rahu')
+     	           .attr("fill", "blue");
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'ketu')
+     	           .attr("fill", "gray");
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'sun')
+     	           .attr("fill", "red");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 140)
+		   .attr("id", 'sun_line')
+     	           .attr("stroke", "black")
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 140)
+		   .attr("id", 'sun_arc')
+     	           .attr("stroke", "red")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 140)
+		   .attr("id", 'sun_asp1')
+     	           .attr("stroke", "red")
+     	           .attr("fill", "none");
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'mars')
+     	           .attr("fill", "brown");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 200)
+		   .attr("id", 'mars_line')
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 200)
+		   .attr("id", 'mars_arc')
+     	           .attr("stroke", "brown")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 200)
+		   .attr("id", 'mars_asp1')
+     	           .attr("stroke", "brown")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 200)
+		   .attr("id", 'mars_asp2')
+     	           .attr("stroke", "brown")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 200)
+		   .attr("id", 'mars_asp3')
+     	           .attr("stroke", "brown")
+     	           .attr("fill", "none");
+
+
+
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'mercury')
+     	           .attr("fill", "green");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 160)
+		   .attr("id", 'mercury_line')
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 160)
+		   .attr("id", 'mercury_arc')
+     	           .attr("stroke", "green")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 160)
+		   .attr("id", 'mercury_asp1')
+     	           .attr("stroke", "green")
+     	           .attr("fill", "none");
+
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'venus')
+     	           .attr("fill", "orange");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 180)
+		   .attr("id", 'venus_line')
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 180)
+		   .attr("id", 'venus_arc')
+     	           .attr("stroke", "orange")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 180)
+		   .attr("id", 'venus_asp1')
+     	           .attr("stroke", "orange")
+     	           .attr("fill", "none");
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'jupiter')
+     	           .attr("fill", "#dbc71a");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 220)
+		   .attr("id", 'jupiter_line')
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 220)
+		   .attr("id", 'jupiter_arc')
+     	           .attr("stroke", "#dbc71a")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 220)
+		   .attr("id", 'jupiter_asp1')
+     	           .attr("stroke", "#dbc71a")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 220)
+		   .attr("id", 'jupiter_asp2')
+     	           .attr("stroke", "#dbc71a")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 220)
+		   .attr("id", 'jupiter_asp3')
+     	           .attr("stroke", "#dbc71a")
+     	           .attr("fill", "none");
+
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 10)
+		   .attr("id", 'saturn')
+     	           .attr("fill", "black");
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 240)
+		   .attr("id", 'saturn_line')
+     	           .attr("stroke", "black")
+	    	   .attr("stroke-dasharray",  "5, 5" )
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 240)
+		   .attr("id", 'saturn_arc')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 240)
+		   .attr("id", 'saturn_asp1')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 240)
+		   .attr("id", 'saturn_asp2')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+     	        svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 240)
+		   .attr("id", 'saturn_asp3')
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+
+
+
+
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", width*0.25/2)
+		   .attr("id", 'clock') 
+     	           .attr("stroke", "black")
+     	           .attr("fill", "none");
+
+     	        svg.append("circle")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", 5)
+		   .attr("id", 'origin') 
+     	           .attr("stroke", "black")
+     	           .attr("fill", "red");
+
+
+
+                function getData() {
+       		  d3.json("/stuff", function(error, response) {
+		    if (error)  { console.log(error) }
+	            console.log(JSON.stringify(response));
+		    document.getElementById("lagna").setAttribute('cx', response['LAGNA'][3][0] * width*0.25/2  );
+		    document.getElementById("lagna").setAttribute('cy', response['LAGNA'][3][1] * width*0.25/2  );
+
+		    moon_cx = response['MOON'][3][0] * 100 ;
+		    moon_cy = response['MOON'][3][1] * 100 ;
+		    moon_angle = response['MOON'][2] ;
+		    document.getElementById("moon").setAttribute('cx', moon_cx);
+		    document.getElementById("moon").setAttribute('cy', moon_cy);
+                    var moon_aspect_radius = width*0.25/2 - 17;
+	            var moon_orb = 7; 
+	            var moon_a1 = (moon_angle + 180) % 360;
+	            var moon_arc  = describeArc(0, 0, moon_aspect_radius, moon_angle-moon_orb, moon_angle+moon_orb);
+	            var moon_asp1 = describeArc(0, 0, moon_aspect_radius, moon_a1-moon_orb, moon_a1+moon_orb);
+	            document.getElementById("moon_arc").setAttribute("d", moon_arc);
+	            document.getElementById("moon_asp1").setAttribute("d", moon_asp1);
+
+
+
+
+		    document.getElementById("sun").setAttribute('cx', response['SUN'][3][0] * 120 );
+		    document.getElementById("sun").setAttribute('cy', response['SUN'][3][1] * 120 );
+		    sun_cx = response['SUN'][3][0] * 120 ;
+		    sun_cy = response['SUN'][3][1] * 120 ;
+		    sun_angle = response['SUN'][2] ;
+		    document.getElementById("sun").setAttribute('cx', sun_cx);
+		    document.getElementById("sun").setAttribute('cy', sun_cy);
+                    var sun_aspect_radius = width*0.25/2 - 15;
+	            var sun_orb = 7; 
+	            var sun_a1 = (sun_angle + 180) % 360;
+	            var sun_arc  = describeArc(0, 0, sun_aspect_radius, sun_angle-sun_orb, sun_angle+sun_orb);
+	            var sun_asp1 = describeArc(0, 0, sun_aspect_radius, sun_a1-sun_orb, sun_a1+sun_orb);
+	            document.getElementById("sun_arc").setAttribute("d", sun_arc);
+	            document.getElementById("sun_asp1").setAttribute("d", sun_asp1);
+
+
+		    document.getElementById("rahu").setAttribute('cx', response['RAHU'][3][0] * 140 );
+		    document.getElementById("rahu").setAttribute('cy', response['RAHU'][3][1] * 140 );
+		    document.getElementById("ketu").setAttribute('cx', response['KETU'][3][0] * 140 );
+		    document.getElementById("ketu").setAttribute('cy', response['KETU'][3][1] * 140 );
+
+		    mercury_cx = response['MERCURY'][3][0] * 160 ;
+		    mercury_cy = response['MERCURY'][3][1] * 160 ;
+		    mercury_angle = response['MERCURY'][2] ;
+		    document.getElementById("mercury").setAttribute('cx', mercury_cx);
+		    document.getElementById("mercury").setAttribute('cy', mercury_cy);
+                    var mercury_aspect_radius = width*0.25/2 - 13;
+	            var mercury_orb = 3; 
+	            var mercury_a1 = (mercury_angle + 180) % 360;
+	            var mercury_arc  = describeArc(0, 0, mercury_aspect_radius, mercury_angle-mercury_orb, mercury_angle+mercury_orb);
+	            var mercury_asp1 = describeArc(0, 0, mercury_aspect_radius, mercury_a1-mercury_orb, mercury_a1+mercury_orb);
+	            document.getElementById("mercury_arc").setAttribute("d", mercury_arc);
+	            document.getElementById("mercury_asp1").setAttribute("d", mercury_asp1);
+
+
+
+		    venus_cx = response['VENUS'][3][0] * 180 ;
+		    venus_cy = response['VENUS'][3][1] * 180 ;
+		    venus_angle = response['VENUS'][2] ;
+		    document.getElementById("venus").setAttribute('cx', venus_cx);
+		    document.getElementById("venus").setAttribute('cy', venus_cy);
+                    var venus_aspect_radius = width*0.25/2 - 11;
+	            var venus_orb = 3; 
+	            var venus_a1 = (venus_angle + 180) % 360;
+	            var venus_arc  = describeArc(0, 0, venus_aspect_radius, venus_angle-venus_orb, venus_angle+venus_orb);
+	            var venus_asp1 = describeArc(0, 0, venus_aspect_radius, venus_a1-venus_orb, venus_a1+venus_orb);
+	            document.getElementById("venus_arc").setAttribute("d", venus_arc);
+	            document.getElementById("venus_asp1").setAttribute("d", venus_asp1);
+
+
+
+
+		    mars_cx = response['MARS'][3][0] * 200 ;
+		    mars_cy = response['MARS'][3][1] * 200 ;
+		    mars_angle = response['MARS'][2] ;
+		    document.getElementById("mars").setAttribute('cx', mars_cx);
+		    document.getElementById("mars").setAttribute('cy', mars_cy);
+                    var mars_aspect_radius = width*0.25/2 - 9;
+	            var mars_orb = 3; 
+	            var mars_a1 = (mars_angle + 90) % 360;
+	            var mars_a2 = (mars_angle + 210) % 360;
+	            var mars_a3 = (mars_angle + 180) % 360;
+	            var mars_arc  = describeArc(0, 0, mars_aspect_radius, mars_angle-mars_orb, mars_angle+mars_orb);
+	            var mars_asp1 = describeArc(0, 0, mars_aspect_radius, mars_a1-mars_orb, mars_a1+mars_orb);
+	            var mars_asp2 = describeArc(0, 0, mars_aspect_radius, mars_a2-mars_orb , mars_a2+mars_orb);
+	            var mars_asp3 = describeArc(0, 0, mars_aspect_radius, mars_a3-mars_orb , mars_a3+mars_orb);
+	            document.getElementById("mars_arc").setAttribute("d", mars_arc);
+	            document.getElementById("mars_asp1").setAttribute("d", mars_asp1);
+	            document.getElementById("mars_asp2").setAttribute("d", mars_asp2);
+	            //document.getElementById("mars_asp3").setAttribute("d", mars_asp3);
+
+
+
+		    jupiter_cx = response['JUPITER'][3][0] * 220 ;
+		    jupiter_cy = response['JUPITER'][3][1] * 220 ;
+		    jupiter_angle = response['JUPITER'][2] ;
+		    document.getElementById("jupiter").setAttribute('cx', jupiter_cx );
+		    document.getElementById("jupiter").setAttribute('cy', jupiter_cy );
+                    var jupiter_aspect_radius = width*0.25/2 - 7;
+	            var jupiter_orb = 4.5; 
+	            var jupiter_a1 = (jupiter_angle + 120) % 360;
+	            var jupiter_a2 = (jupiter_angle + 240) % 360;
+	            var jupiter_a3 = (jupiter_angle + 180) % 360;
+	            var jupiter_arc  = describeArc(0, 0, jupiter_aspect_radius, jupiter_angle-jupiter_orb, jupiter_angle+jupiter_orb);
+	            var jupiter_asp1 = describeArc(0, 0, jupiter_aspect_radius, jupiter_a1-jupiter_orb, jupiter_a1+jupiter_orb);
+	            var jupiter_asp2 = describeArc(0, 0, jupiter_aspect_radius, jupiter_a2-jupiter_orb , jupiter_a2+jupiter_orb);
+	            var jupiter_asp3 = describeArc(0, 0, jupiter_aspect_radius, jupiter_a3-jupiter_orb , jupiter_a3+jupiter_orb);
+	            document.getElementById("jupiter_arc").setAttribute("d", jupiter_arc);
+	            document.getElementById("jupiter_asp1").setAttribute("d", jupiter_asp1);
+	            document.getElementById("jupiter_asp2").setAttribute("d", jupiter_asp2);
+	            //document.getElementById("jupiter_asp3").setAttribute("d", jupiter_asp3);
+
+		    saturn_cx = response['SATURN'][3][0] * 240 ;
+		    saturn_cy = response['SATURN'][3][1] * 240 ;
+		    saturn_angle = response['SATURN'][2] ;
+		    document.getElementById("saturn").setAttribute('cx', saturn_cx);
+		    document.getElementById("saturn").setAttribute('cy', saturn_cy);
+                    var saturn_aspect_radius = width*0.25/2 - 5;
+	            var saturn_orb = 4.5; 
+	            var saturn_a1 = (saturn_angle + 60) % 360;
+	            var saturn_a2 = (saturn_angle + 270) % 360;
+	            var saturn_a3 = (saturn_angle + 180) % 360;
+	            var saturn_arc  = describeArc(0, 0, saturn_aspect_radius, saturn_angle-saturn_orb, saturn_angle+saturn_orb);
+	            var saturn_asp1 = describeArc(0, 0, saturn_aspect_radius, saturn_a1-saturn_orb, saturn_a1+saturn_orb);
+	            var saturn_asp2 = describeArc(0, 0, saturn_aspect_radius, saturn_a2-saturn_orb , saturn_a2+saturn_orb);
+	            var saturn_asp3 = describeArc(0, 0, saturn_aspect_radius, saturn_a3-saturn_orb , saturn_a3+saturn_orb);
+	            document.getElementById("saturn_arc").setAttribute("d", saturn_arc);
+	            document.getElementById("saturn_asp1").setAttribute("d", saturn_asp1);
+	            document.getElementById("saturn_asp2").setAttribute("d", saturn_asp2);
+	            //document.getElementById("saturn_asp3").setAttribute("d", saturn_asp3);
+		    });
+                }
 
 		////////////////////////////////////////////////////////////
 		//////////////////// Scales & Data /////////////////////////
@@ -70,13 +580,9 @@
 
 		//Creates a function that makes SVG paths in the shape of arcs with the specified inner and outer radius 
 		var arc = d3.svg.arc()
-			.innerRadius(width*0.9/2 +   0) 
-			.outerRadius(width*0.9/2 +  30);
+			.innerRadius(width*0.25/2 +   0) 
+			.outerRadius(width*0.9/2 +  10);
 
-		var lagna = d3.svg.arc()
-			.innerRadius(width*0.9/2 -  15) 
-			.outerRadius(width*0.9/2 -   0);
-		  
 		  
 		//Creates function that will turn the month data into start and end angles
 		var pie = d3.layout.pie()
@@ -85,11 +591,7 @@
 			.sort(null);
 	             //Append circle
 
-         	svg.append("circle")
-         	   .attr("cx", 100)
-         	   .attr("cy", 50)
-         	   .attr("r", 10)
-         	   .attr("fill", "black");
+
 
 
 
@@ -104,18 +606,45 @@
 			.attr("class", "monthArc")
 			.attr("id", function(d,i) { return "monthArc_"+i; })
 			.attr("d", arc)
-	                .style("stroke-width", 2);
+	                .style("stroke-width", 1);
 			
 		//Append the month names within the arcs
 		svg.selectAll(".monthText")
 			.data(monthData)
 		   .enter().append("text")
 			.attr("class", "monthText")
-			.attr("x", 15) //Move the text from the start angle of the arc
-			.attr("dy", 18) //Move the text down
+			.attr("x", 35) //Move the text from the start angle of the arc
+			.attr("dy", 30) //Move the text down
 		    .append("textPath")
 			.attr("xlink:href",function(d,i){return "#monthArc_"+i;})
 			.text(function(d){return d.month;});	
+
+
+	        getData();
+	        interval_id = window.setInterval(getData,  60000); 
+
+	        const minsHand = document.querySelector('#minutes');
+	        const hourHand = document.querySelector('#hours');
+	        const secondHand = document.querySelector('#seconds');
+
+	        function setDate() {
+	            		   const now = new Date();
+
+	            		   const seconds = now.getSeconds();
+	            		   const secondsDegrees = ((seconds / 60) * 360) + 270;
+	            		   secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+
+	            		   const mins = now.getMinutes();
+	            		   const minsDegrees = ((mins / 60) * 360) + ((seconds/60)*6) + 270;
+	            		   minsHand.style.transform = `rotate(${minsDegrees}deg)`;
+
+	            		   const hour = now.getHours();
+	            		   const hourDegrees = ((hour / 12) * 360) + ((mins/60)*30) + 270;
+	            		   hourHand.style.transform = `rotate(${hourDegrees}deg)`;
+	            	 }
+
+	        setInterval(setDate, 1000);
+
 	</script>
 	
   </body>
