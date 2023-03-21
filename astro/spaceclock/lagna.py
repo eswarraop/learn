@@ -52,7 +52,7 @@ reset_ayanamsa_mode = lambda: swe.set_sid_mode(swe.SIDM_FAGAN_BRADLEY)
 def sidereal_longitude(jd, place, planet):
   """Computes nirayana (sidereal) longitude of given planet on jd"""
   lat, lon, tz  = place
-  jd_utc = jd - (tz / 24.)
+  jd_utc = jd 
   set_ayanamsa_mode()
   longi = swe.calc_ut(jd_utc, planet, flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL)
   reset_ayanamsa_mode()
@@ -77,7 +77,7 @@ def local_time_to_jdut1(year, month, day, hour = 0, minutes = 0, seconds = 0, ti
 
 def ascendant(jd, place):
     lat, lon, tz  = place
-    jd_utc = jd - (tz / 24.)
+    jd_utc = jd 
     
     set_ayanamsa_mode()
     data = swe.houses_ex(jd_utc, lat, lon, flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL )
@@ -130,7 +130,7 @@ def print_chart(jd, city):
 
 def get_planet_data():
 
-    now = datetime.datetime.now()
+    now = datetime.datetime.utcnow()
     city = austin = Place(30.2672, -97.7431, -6)
     jd = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60. + now.second/3600.)
     data = {}
