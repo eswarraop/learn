@@ -124,7 +124,7 @@
      	           .attr("cx", 0)
      	           .attr("cy", 0)
      	           .attr("r", 100)
-		   .attr("id", 'lagna_line')
+		   .attr("id", 'lagna_circle')
 	    	   .attr("stroke-dasharray",  "5, 5" )
      	           .attr("stroke", "black")
      	           .attr("fill", "none");
@@ -403,7 +403,15 @@
 
 
 
-
+               svg.append("path")
+     	           .attr("cx", 0)
+     	           .attr("cy", 0)
+     	           .attr("r", width*0.25/2)
+		   .attr("id", 'lagna_arc')
+     	           .attr("stroke", "black")
+     	           .attr("opacity", "0.2")
+     	           .attr("fill", "gray");
+ 
      	        svg.append("circle")
      	           .attr("cx", 0)
      	           .attr("cy", 0)
@@ -428,6 +436,17 @@
 	            console.log(JSON.stringify(response));
 		    document.getElementById("lagna").setAttribute('cx', response['LAGNA'][3][0] * width*0.25/2  );
 		    document.getElementById("lagna").setAttribute('cy', response['LAGNA'][3][1] * width*0.25/2  );
+
+		    lagna_cx = response['LAGNA'][3][0] * width*0.25/2 ;
+		    lagna_cy = response['LAGNA'][3][1] * width*0.25/2 ;
+		    lagna_angle = response['LAGNA'][2] ;
+                    var lagna_aspect_radius = width*0.25/2 ;
+	            var lagna_a1 = (lagna_angle + 0) % 360;
+	            var lagna_a2 = (lagna_angle + 180) % 360;
+
+	            var lagna_arc  = describeArc(0, 0, lagna_aspect_radius, lagna_a1, lagna_a2);
+	            document.getElementById("lagna_arc").setAttribute("d", lagna_arc);
+
 
 		    moon_cx = response['MOON'][3][0] * 100 ;
 		    moon_cy = response['MOON'][3][1] * 100 ;
@@ -565,17 +584,17 @@
 		//The start date number and end date number of the months in a year
 		var monthData = [
 			{month: "Mesha", 	    startDateID: 0, 	endDateID: 30},
-			{month: "Vrishaba",     startDateID: 31, 	endDateID: 60},
-			{month: "Mithuna", 	    startDateID: 61, 	endDateID: 90},
-			{month: "Karka", 	    startDateID: 91, 	endDateID: 120},
-			{month: "Simha",        startDateID: 121, 	endDateID: 150},
-			{month: "Kanya", 	    startDateID: 151, 	endDateID: 180},
-			{month: "Tula", 	    startDateID: 181, 	endDateID: 210},
-			{month: "Vrischika",   	startDateID: 211, 	endDateID: 240},
-			{month: "Dhanu",        startDateID: 241, 	endDateID: 270},
-			{month: "Makara", 	    startDateID: 271, 	endDateID: 300},
-			{month: "Kumbha",       startDateID: 301, 	endDateID: 330},
-			{month: "Meena",	    startDateID: 331, 	endDateID: 360}
+			{month: "Vrishaba",     startDateID: 30, 	endDateID: 60},
+			{month: "Mithuna", 	    startDateID: 60, 	endDateID: 90},
+			{month: "Karka", 	    startDateID: 90, 	endDateID: 120},
+			{month: "Simha",        startDateID: 120, 	endDateID: 150},
+			{month: "Kanya", 	    startDateID: 150, 	endDateID: 180},
+			{month: "Tula", 	    startDateID: 180, 	endDateID: 210},
+			{month: "Vrischika",   	startDateID: 210, 	endDateID: 240},
+			{month: "Dhanu",        startDateID: 240, 	endDateID: 270},
+			{month: "Makara", 	    startDateID: 270, 	endDateID: 300},
+			{month: "Kumbha",       startDateID: 300, 	endDateID: 330},
+			{month: "Meena",	    startDateID: 330, 	endDateID: 360}
 		];
 
 		//Creates a function that makes SVG paths in the shape of arcs with the specified inner and outer radius 
@@ -587,7 +606,7 @@
 		//Creates function that will turn the month data into start and end angles
 		var pie = d3.layout.pie()
 			.value(function(d) { return d.endDateID - d.startDateID; })
-			.padAngle(.01)
+			//.padAngle(.01)
 			.sort(null);
 	             //Append circle
 

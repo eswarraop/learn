@@ -6,6 +6,7 @@ from collections import namedtuple as struct
 import datetime
 import swisseph as swe
 import math
+import time
 
 Date = struct('Date', ['year', 'month', 'day'])
 Place = struct('Place', ['latitude', 'longitude', 'timezone'])
@@ -77,8 +78,7 @@ def local_time_to_jdut1(year, month, day, hour = 0, minutes = 0, seconds = 0, ti
 
 def ascendant(jd, place):
     lat, lon, tz  = place
-    jd_utc = jd - (tz / 24.)
-    
+    jd_utc = jd - (tz / 24.)  
     set_ayanamsa_mode()
     data = swe.houses_ex(jd_utc, lat, lon, flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL )
     nirayana_lagna = data[1][0]
@@ -131,7 +131,8 @@ def print_chart(jd, city):
 def get_planet_data():
 
     now = datetime.datetime.now()
-    city = austin = Place(30.2672, -97.7431, -6)
+    dst = time.localtime().tm_isdst
+    city = austin = Place(30.2672, -97.7431, -6+dst)
     jd = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60. + now.second/3600.)
     data = {}
     asc = ascendant(jd, city)
@@ -168,11 +169,12 @@ if __name__ == '__main__':
     now = datetime.datetime.now()
     #jd2 = local_time_to_jdut1(now.year, now.month, now.day, hour = now.hour, minutes = now.minute, seconds = now.second, timezone = -6.0)
     import sys
+    dst = time.localtime().tm_isdst
     bangalore = Place(12.972, 77.594, +5.5)
     visakhapatnam = Place(17.6868, 83.2185, +5.5)
     shillong = Place(25.569, 91.883, +5.5)
     helsinki = Place(60.17, 24.935, +2.0)
-    austin = Place(30.2672, -97.7431, -6)
+    austin = Place(30.2672, -97.7431, -6+dst)
     #ascendant_tests()
 
     jd2 = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60. + now.second/3600.)
