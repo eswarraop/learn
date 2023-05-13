@@ -136,7 +136,8 @@ def get_planet_data():
     jd = swe.julday(now.year, now.month, now.day, now.hour + now.minute/60. + now.second/3600.)
     data = {}
     asc = ascendant(jd, city)
-    normalized = ( asc[2] + 270 ) % 360 
+    #normalized = ( asc[2] + 270 ) % 360 
+    normalized = ( asc[2] + 180 ) % 360 
     radians = normalized * math.pi / 180
     cartesian = [math.cos(radians), math.sin(radians)]
     asc.append(cartesian)
