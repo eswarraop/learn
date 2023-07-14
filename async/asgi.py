@@ -9,7 +9,8 @@ app_dir = os.path.dirname( script )
 sys.path.insert(0, app_dir)
 
 #from server import application
-from q2 import app as application
+#from q2 import app as application
+from q2_sanic import app as application
 
 
 if __name__ == "__main__":

@@ -1,0 +1,21 @@
+{
+    "listeners": {
+        "*:8192": {
+            "pass": "applications/spaceclock_asgi"
+        }
+    },
+    "applications": {
+        "spaceclock_asgi": {
+            "processes": 1,
+            "limits": {
+                "timeout": 3,
+                "requests": 500
+
+            },
+            "type": "python3.9.2",
+            "path": "/home/eswar/learn/async/",
+            "module": "asgi", 
+            "callable": "application"
+        }
+    }
+}

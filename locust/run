@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+locust --headless -u 10 -r 1 -t 30 -H http://localhost:8192 
+#locust --headless -u 10 -r 1 -t 30 --json -H http://localhost:8000
+
+
